@@ -14,7 +14,7 @@ def string_cleaner(s):
     """
     cleans the individual strings to have format "num\tnum\tnum\tname"
     """
-    regex = "(\d*)\s*(\d*)\s*(\d*)\s*(\w*)\n"
+    regex = "\s*(\d+)\s*(\d+)\s*(\d+)\s*\t+(.+)\n"
     lst = re.findall(regex, s)
     lst = list(lst[0]) #list(tuple)
     return "\t".join(lst)
