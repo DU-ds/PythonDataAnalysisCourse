@@ -6,6 +6,20 @@ class Rational(object):
     def __init__(self, top, bottom):
         self.numerator = top
         self.denomonator = bottom
+        
+    #maybe I don't even need to reduce? Just has to work like rational numbers!
+    # If needed, could just use math.gcd instead until it's found:
+    # https://docs.python.org/3/library/math.html
+    
+    def reduce_fraction_fast(self, a, b):
+        """helper function, a numerator, b is denominator"""
+        gcd = math.gcd(a, b)
+        if gcd == 0 or gcd == 1: #base case
+            return(a, b) # a or b is zero or a and b are coprime
+        else:
+            a /= gcd
+            b /= gcd #reduce
+            return self(a, b) #recurse
     
     def __add__(self, ):
     
