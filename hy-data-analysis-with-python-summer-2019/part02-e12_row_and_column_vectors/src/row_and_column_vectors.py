@@ -3,10 +3,22 @@
 import numpy as np
 
 def get_row_vectors(a):
-    return []
+    rows = []
+    ncols = a.shape[1]
+    for i in range(a.shape[0]):
+        row = a[i,:]
+        row = row.reshape(1,ncols)
+        rows.append(row)
+    return rows
 
 def get_column_vectors(a):
-    return []
+    cols = []
+    nrows = a.shape[0]
+    for i in range(a.shape[1] ):
+        col = a[:,i]
+        col = col.reshape(nrows,1)
+        cols.append(col)
+    return cols
 
 def main():
     np.random.seed(0)

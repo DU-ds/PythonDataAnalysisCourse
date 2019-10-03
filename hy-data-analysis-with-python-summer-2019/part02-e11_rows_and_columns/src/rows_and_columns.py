@@ -3,10 +3,28 @@
 import numpy as np
 
 def get_rows(a):
-    return []
+    """
+    Args:
+        a: 2-d numpy array
+    Returns:
+        rows: list of 1-d numpy arrays, rows of a
+    """
+    rows = []
+    for i in range(a.shape[0]):
+        rows.append(a[i,:])
+    return rows
 
 def get_columns(a):
-    return []
+    """
+    Args:
+        a: 2-d numpy array
+    Returns:
+        cols: list of 1-d numpy arrays, columns of a
+    """
+    cols = []
+    for i in range(a.shape[1]):
+        cols.append(a[:,i])
+    return cols
 
 def main():
     np.random.seed(0)
