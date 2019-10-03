@@ -43,31 +43,8 @@ class Rational(object):
         b = b1 * b2
         return (a1, a2, b)
     
-    def __add__(self, rational2):
-        def reduce_fraction_fast(a, b):
-            """helper function, a numerator, b is denominator"""
-            a = int(a)
-            b = int(b) #not accepting anything other than integers so it's fine
-            if a == 0 or b == 0: #b shouldn't be zero but just to be safe
-                return (a, b)
-            gcd = math.gcd(a, b)
-            if  gcd == 1: #base case
-                return(a, b) # a or b is zero or a and b are coprime
-            else:
-                a /= gcd
-                b /= gcd #reduce
-                return reduce_fraction_fast(a, b) #recurse
-
-        a1 = self.numerator
-        a2 = rational2.numerator
-        b1 = self.denomonator
-        b2 = rational2.denomonator
-        #get the same denominator
-        a1 *= b2
-        a2 *= b1
-        #common denominator
-        b = b1 * b2
-        # a1, a2, b = common_denominator(self, rational2)
+    def __add__(self, rational2):    
+        a1, a2, b = common_denominator(self, rational2)
         #add numerators
         a = a1+a2
         #reduce
@@ -75,49 +52,14 @@ class Rational(object):
         return Rational(a, b)
     
     def __sub__(self, rational2):
-        def reduce_fraction_fast(a, b):
-            """helper function, a numerator, b is denominator"""
-            a = int(a)
-            b = int(b) #not accepting anything other than integers so it's fine
-            if a == 0 or b == 0: #b shouldn't be zero but just to be safe
-                return (a, b)
-            gcd = math.gcd(a, b)
-            if  gcd == 1: #base case
-                return(a, b) # a or b is zero or a and b are coprime
-            else:
-                a /= gcd
-                b /= gcd #reduce
-                return reduce_fraction_fast(a, b) #recurse
-                
-        a1 = self.numerator
-        a2 = rational2.numerator
-        b1 = self.denomonator
-        b2 = rational2.denomonator
-        #get the same denominator
-        a1 *= b2
-        a2 *= b1
-        #common denominator
-        b = b1 * b2
-        # a1, a2, b = common_denominator(self, rational2)
+        a1, a2, b = common_denominator(self, rational2)
         # subtract numerators
+        
         a = a1 - a2
         a, b = reduce_fraction_fast(a, b)
         return Rational(a, b)
     
     def __mul__(self, rational2):
-        def reduce_fraction_fast(a, b):
-            """helper function, a numerator, b is denominator"""
-            a = int(a)
-            b = int(b) #not accepting anything other than integers so it's fine
-            if a == 0 or b == 0: #b shouldn't be zero but just to be safe
-                return (a, b)
-            gcd = math.gcd(a, b)
-            if  gcd == 1: #base case
-                return(a, b) # a or b is zero or a and b are coprime
-            else:
-                a /= gcd
-                b /= gcd #reduce
-                return reduce_fraction_fast(a, b) #recurse
         # (almost) inverse of truediv
         a = self.numerator * rational2.numerator
         b = self.denomonator * rational2.denomonator
@@ -127,19 +69,6 @@ class Rational(object):
     def __truediv__(self, rational2):
         # (almost) inverse of mul, undefined where rational2.numerator is 0
         # (a/b) / (c/d) = ad/bc
-        def reduce_fraction_fast(a, b):
-            """helper function, a numerator, b is denominator"""
-            a = int(a)
-            b = int(b) #not accepting anything other than integers so it's fine
-            if a == 0 or b == 0: #b shouldn't be zero but just to be safe
-                return (a, b)
-            gcd = math.gcd(a, b)
-            if  gcd == 1: #base case
-                return(a, b) # a or b is zero or a and b are coprime
-            else:
-                a /= gcd
-                b /= gcd #reduce
-                return reduce_fraction_fast(a, b) #recurse
         a = self.numerator * rational2.denomonator
         b = self.denomonator * rational2.numerator
         if(b == 0):
@@ -149,47 +78,16 @@ class Rational(object):
             return Rational(a, b)
         
     def __lt__(self, rational2):
-        a1 = self.numerator
-        a2 = rational2.numerator
-        b1 = self.denomonator
-        b2 = rational2.denomonator
-        #get the same denominator
-        a1 *= b2
-        a2 *= b1
-        #common denominator
-        b = b1 * b2
-        return a1 < a2
-        # a, b, c = common_denominator(self, rational2)
-        # return a < b
+        a, b, c = common_denominator(self, rational2)
+        return a < b
     
     def __gt__(self, rational2):
-        a1 = self.numerator
-        a2 = rational2.numerator
-        b1 = self.denomonator
-        b2 = rational2.denomonator
-        #get the same denominator
-        a1 *= b2
-        a2 *= b1
-        #common denominator
-        b = b1 * b2
-        return a1 > a2
-        # a, b, c = common_denominator(self, rational2)
-        # return a > b
+        a, b, c = common_denominator(self, rational2)
+        return a > b
          
     def __eq__(self, rational2):
-        a1 = self.numerator
-        a2 = rational2.numerator
-        b1 = self.denomonator
-        b2 = rational2.denomonator
-        #get the same denominator
-        a1 *= b2
-        a2 *= b1
-        #common denominator
-        b = b1 * b2
-        return a1 == a2
-        # a, b, c = common_denominator(self, rational2)
-        # return a == b
-        
+        a, b, c = common_denominator(self, rational2)
+        return a == b
     
     def __str__(self):
         return str(self.numerator) + "/" + str(self.denomonator)
