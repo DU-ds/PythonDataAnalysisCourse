@@ -4,10 +4,14 @@ import numpy as np
 #import scipy.linalg
 
 def vector_lengths(a):
-    return np.array([])
+    a2 = a * a # a squared
+    a2 = np.sum(a2, axis = 1) #sum of squares
+    a2 = np.sqrt(a2)
+    return a2
 
 def main():
-    pass
+    b = np.arange(12).reshape(3,4)
+    print(vector_lengths(b))
 
 if __name__ == "__main__":
     main()
