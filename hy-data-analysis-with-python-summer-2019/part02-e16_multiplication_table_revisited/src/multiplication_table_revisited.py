@@ -3,7 +3,13 @@
 import numpy as np
 
 def multiplication_table(n):
-    return np.array([])
+    a = np.arange(n).reshape(n, 1)
+    b = np.arange(n)
+    try:
+        c = b * a
+    except:
+        print("oops")
+    return c
 
 def main():
     print(multiplication_table(4))
