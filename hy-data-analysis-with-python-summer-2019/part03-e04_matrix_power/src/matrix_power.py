@@ -40,7 +40,8 @@ def matrix_power(a, n):
     return funk.reduce(lambda x, a: a @ x, i for i in range(n), a )
     
     # https://docs.python.org/3/library/functools.html
-    
+    # https://www.python.org/dev/peps/pep-0289/
+    # https://pymotw.com/3/functools/
 
 def main():
     s = np.array([[1, 6, 7],[7, 8, 1],[5, 9, 8]])
