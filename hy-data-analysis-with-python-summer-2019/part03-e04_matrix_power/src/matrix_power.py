@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
+import functools as funk
 
 def matrix_power(a, n):
     """
@@ -19,30 +20,34 @@ def matrix_power(a, n):
     n < 0 apply inverse n-1 times
     """
     # np.eye(2)
-    def recursive_matrix_multiply(a, n):
-        """only call with positive integer n args"""
-        if n == 1:
-            return a
-        else:
-            return a @ recursive_matrix_multiply(a, n-1)
-    def recursive_matrix_inverse(a, n):
-        """positive n"""
-        if n == 1:
-            return np.linalg.inv(a)
+    # def recursive_matrix_multiply(a, n):
+    #     """only call with positive integer n args"""
+    #     if n == 1:
+    #         return a
+    #     else:
+    #         return a @ recursive_matrix_multiply(a, n-1)
+    # def recursive_matrix_inverse(a, n):
+    #     """positive n"""
+    #     if n == 1:
+    #         return np.linalg.inv(a)
     
-    if n == 0:
-        return np.eye(a.shape[0])
-    elif n > 0:
-        return recursive_matrix_multiply(a, n)
-    else:
-        return recursive_matrix_inverse(a, -n)
+    # if n == 0:
+    #     return np.eye(a.shape[0])
+    # elif n > 0:
+    #     return recursive_matrix_multiply(a, n)
+    # else:
+    #     return recursive_matrix_inverse(a, -n)
+    return funk.reduce(lambda x, a: a @ x, i for i in range(n), a )
+    
+    # https://docs.python.org/3/library/functools.html
+    
 
 def main():
     s = np.array([[1, 6, 7],[7, 8, 1],[5, 9, 8]])
     print(s)
-    s_inv = matrix_power(s, -1)
-    print(s_inv)
-    print(s @ s_inv)
+    # s_inv = matrix_power(s, -1)
+    # print(s_inv)
+    # print(s @ s_inv)
     mat = np.array([[1, 2],[3, 4]])
     mat_squared = matrix_power(mat, 2)
     print("\nmat:\n", mat)
