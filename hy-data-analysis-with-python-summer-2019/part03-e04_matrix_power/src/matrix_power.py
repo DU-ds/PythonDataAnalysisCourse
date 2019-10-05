@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
-import functools as funk
+import functools
 import itertools as it
 
 def matrix_power(a, n):
@@ -24,15 +24,15 @@ def matrix_power(a, n):
     if n > 0:
         A = np.repeat(a[np.newaxis,...], n, axis = 0)
         G = ( A[i,:,:] for i in range(n) )
-        return funk.reduce(lambda x, y: x @ y , (a for a in G))
+        return functools.reduce(lambda x, y: x @ y , (a for a in G))
     elif n == 0:
         return np.eye(a.shape[0])
     else:
-        a_inv = numpy.linalg.inv(a)
+        a_inv = np.linalg.inv(a)
         n *= -1
-        A = np.repeat(a_inv[np.newaxis,...], n, axis = 0)
+        A_inv = np.repeat(a_inv[np.newaxis,...], n, axis = 0)
         G = ( A_inv[i,:,:] for i in range(n) )
-        return funk.reduce(lambda x, y: x @ y , (a for a in G))
+        return functools.reduce(lambda x, y: x @ y , (a for a in G))
 
 # G = ( 100*a + 10*b + c for a in range(0,10)
 #                        for b in range(0,10)

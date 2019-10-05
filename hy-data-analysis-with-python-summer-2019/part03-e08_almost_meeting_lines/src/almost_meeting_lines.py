@@ -3,8 +3,10 @@
 import numpy as np
 
 def almost_meeting_lines(a1, b1, a2, b2):
-    A = np.array([a1,b1],[a2,b2])
-    b = np.array([1,1])
+    a1 *= -1
+    a2 *= -1
+    A = np.array([[a1,1],[a2,1]])
+    b = np.array([b1,b2])
     x, res, rank, sval = np.linalg.lstsq(A, b)
     exact = A.shape[1] == rank
     #maybe I could take the sum of the residuals instead?

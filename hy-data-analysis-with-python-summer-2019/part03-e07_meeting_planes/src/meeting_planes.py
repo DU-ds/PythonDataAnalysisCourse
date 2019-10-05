@@ -3,10 +3,18 @@
 import numpy as np
 
 def meeting_planes(a1, b1, c1, a2, b2, c2, a3, b3, c3):
-    A = np.array([[a1,b1,c1],[a2,b2,c2],[a3,b3,c3]])
-    b = np.array([1,1,1])
-    return np.linalg.solve(A, b)
+    A = np.array([[a1,b1,1],[a2,b2,1],[a3,b3,1]])
+    b = np.array([-c1,-c2,-c3])
+    x, y, z = np.linalg.solve(A, b)
+    return (x,y,-1*z)
+"""
+|z1 = a1x + b1y + c1|   --> |-c1 = a1x + b1y - z1|      |-c1 = a1 + b1 - 1| |x|      |-c1 = a1 + b1 + 1| | x|  
+|z2 = a2x + b2y + c2|   --> |-c2 = a2x + b2y - z2|  --> |-c2 = a2 + b2 - 1| |y|  --> |-c2 = a2 + b2 + 1| | y|   
+|z3 = a3x + b3y + c3|   --> |-c3 = a3x + b3y - z3|      |-c3 = a3 + b3 - 1| |z|      |-c3 = a3 + b3 + 1| |-z|  
 
+
+
+"""
 def main():
     a1=1
     b1=4

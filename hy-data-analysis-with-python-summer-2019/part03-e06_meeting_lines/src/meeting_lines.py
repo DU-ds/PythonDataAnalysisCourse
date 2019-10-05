@@ -5,8 +5,8 @@ import numpy as np
 def meeting_lines(a1, b1, a2, b2):
     # a1 *= -1
     # a2 *= -1
-    A = np.array([[a1,b1],[a2,b2]])
-    b = np.array([1, 1])
+    A = np.array([[-b1, 1],[-b2, 1]])
+    b = np.array([a1, a2])
     return np.linalg.solve(A, b)
 
 def main():

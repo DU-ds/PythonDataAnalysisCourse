@@ -11,7 +11,8 @@ def load2():
 
 def load():
     import pandas as pd
-    return pd.read_csv("R:/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e05_correlation/src/iris.csv").drop('species', axis=1).values
+    return pd.read_csv("src/iris.csv").drop('species', axis=1).values
+        # "R:/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e05_correlation/src/iris.csv"
 
 def lengths():
     df = load()
