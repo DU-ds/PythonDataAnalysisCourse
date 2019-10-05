@@ -3,7 +3,11 @@
 import numpy as np
 
 def meeting_lines(a1, b1, a2, b2):
-    return []
+    # a1 *= -1
+    # a2 *= -1
+    A = np.array([[a1,b1],[a2,b2]])
+    b = np.array([1, 1])
+    return np.linalg.solve(A, b)
 
 def main():
     a1=1
@@ -16,3 +20,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""
+https://math.stackexchange.com/questions/1348380/intersection-of-two-planes-how-to-represent-a-line
+y = a1*x + b1
+y = a2*x + b2
+
+1 = a1 + b1 
+1 = a2 + b2 
+"""
