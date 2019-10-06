@@ -19,16 +19,64 @@ def to_grayscale(img):
     img2[:,:,0] *= red_weight
     img2[:,:,1] *= green_weight
     img2[:,:,2] *= blue_weight
-    return np.sum(img2, axis = 2) 
+    return np.sum(img2, axis = 2)
+
+def to_one_RGB(a, color):
+    """
+    assumes red is in axis 0, green is in axis 1, and blue is in axis 2
+    """
+    img = a.copy() # np arrays are mutable right?
+    color = color.lower() #so a user can type Red, RED, ReD, rED, R, r and get a red img back
+    if color == "red" or color == "r":
+        other_colors = [1,2]
+    elif color == "green" or color == "g":
+        other_colors = [0,2]
+    elif color == "blue" or color == "b":
+        other_colors = [0,1]
+    else:
+        raise ValueError("not a valid color\nAccepts: red, green, and blue")
+    
+    img[:,:,other_colors] *= 0 #now only 1 of the 3 colors is non-zero.
+    return img
+    
     
 
-def main():
-    img = plt.imread("R:/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png")
-    # plt.imread("src/painting.png")
-    plt.imshow(img)
-    grey_img = to_grayscale(img)
-    plt.imshow(grey_img)
+def to_red(a):
+   return to_one_RGB(a, "red")   
 
+def to_green(a):
+    return to_one_RGB(a, "green")
+
+def to_blue(a):
+    return to_one_RGB(a, "blue")
+            
+
+def main():
+    # f = "/home/du_ds/Documents/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
+    f = "painting.png"
+    # f = "hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
+    # f = "R:/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
+    ace = plt.imread(f)
+    plt.imshow(ace)
+    grey_ace = to_grayscale(ace)
+    # plt.gray() # because it needs to print it as a black and white image
+    plt.imshow(grey_ace, cmap = "gray")
+    # plt.plot(grey_ace)
+    
+    # plt.
+    pic, plots = plt.subplots(3,1)
+    red = to_red(ace)[:,:,0]
+    plots[0].imshow(red)
+    # plots[0].imshow(red, cmap = "Reds")
+
+    green = to_red(ace)[:,:,1]
+    plots[1].imshow(green)
+    # plots[0].imshow(green, cmap = "Greens")
+    
+    blue = to_red(ace)[:,:,2]
+    plots[2].imshow(blue)
+    # plots[0].imshow(blue, cmap = "Blues")
+    # plots.show()
     
 
 if __name__ == "__main__":
@@ -49,3 +97,4 @@ In the main function you can, for example, use the provided image src/painting.p
 Display the grayscale image with the plt.imshow function. You may have to call the 
 function plt.gray to set the color palette (colormap) to gray. (See help(plt.colormaps) 
 for more information about colormaps.)
+"""
