@@ -52,8 +52,7 @@ def to_blue(a):
             
 
 def main():
-    # f = "/home/du_ds/Documents/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
-    f = "painting.png"
+    f = "src/painting.png"
     # f = "hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
     # f = "R:/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
     ace = plt.imread(f)

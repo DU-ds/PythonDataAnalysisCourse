@@ -17,7 +17,7 @@ def subfigures(a):
 def main():
     ace = np.array([[1,24,7,10],[12/5,15/7, 51/6,12/4],[0.79,0.45,0.85,0.27], [12,12,12,12]])
     grey_ace = subfigures(a)
-    plt.plot(grey_ace)
+    
 
 if __name__ == "__main__":
     main()
