@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,7 +16,8 @@ def to_grayscale(img):
     red_weight = 0.2126
     green_weight = 0.7152
     blue_weight = 0.0722
-    img2 = img.copy()
+    img2 = img.astype(float, casting = "unsafe")
+    # https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.ndarray.astype.html
     img2[:,:,0] *= red_weight
     img2[:,:,1] *= green_weight
     img2[:,:,2] *= blue_weight
@@ -36,9 +38,15 @@ def to_one_RGB(a, color):
     else:
         raise ValueError("not a valid color\nAccepts: red, green, and blue")
     
-    img[:,:,other_colors] *= 0 #now only 1 of the 3 colors is non-zero.
+    # dims = img[:,:,other_colors].shape
+    # s = ' * '.join(map(str,list(dims)))
+    # k = eval(s)
+    # Equivalent to:
+    # k = dims[0] * dims[1] * dims[2]
+    img[:,:,other_colors] = 0
+    # np.multiply(img[:,:,other_colors], np.zeros(k).reshape(dims), out = img[:,:,other_colors], casting = "unsafe" ) #now only 1 of the 3 colors is non-zero.
     return img
-    
+
     
 
 def to_red(a):
@@ -52,9 +60,12 @@ def to_blue(a):
             
 
 def main():
-    f = "src/painting.png"
+    # f = "src/painting.png"
     # f = "hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
     # f = "R:/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part03-e11_to_grayscale/src/painting.png"
+    # f = os.path.dirname(os.path.realpath(__file__))
+    f = os.getcwd() + "/src/painting.png"
+    # https://stackoverflow.com/questions/5137497/find-current-directory-and-files-directory
     ace = plt.imread(f)
     plt.imshow(ace)
     grey_ace = to_grayscale(ace)
@@ -65,17 +76,17 @@ def main():
     # plt.
     pic, plots = plt.subplots(3,1)
     red = to_red(ace)[:,:,0]
-    plots[0].imshow(red)
+    plots[0].imshow(red, cmap = "rainbow")
     # plots[0].imshow(red, cmap = "Reds")
-
+    
     green = to_red(ace)[:,:,1]
-    plots[1].imshow(green)
+    plots[1].imshow(green, cmap = "rainbow")
     # plots[0].imshow(green, cmap = "Greens")
     
     blue = to_red(ace)[:,:,2]
-    plots[2].imshow(blue)
+    plots[2].imshow(blue, cmap = "rainbow")
     # plots[0].imshow(blue, cmap = "Blues")
-    # plots.show()
+    plt.show()
     
 
 if __name__ == "__main__":
