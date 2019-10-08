@@ -4,8 +4,8 @@ import pandas as pd
 import math
 
 def powers_of_series(s, k):
-    df = pd.DataFrame(s)
-    for i in range(2, k+1):
+    df = pd.DataFrame()
+    for i in range(1, k+1):
         df[i] = s ** i
     return df
     
