@@ -10,11 +10,13 @@ def cleaning_data():
     df.Start = df.Start.replace(r"([0-9]*)\s+[a-zA-Z]+", r"\1", regex = True)
     df.President = df.President.replace(r"([a-zA-Z]*),\s+([a-zA-Z]*)", r"\2 \1" , regex = True)
     df["Vice-president"] = df["Vice-president"].replace(r"([a-zA-Z]*),\s+([a-zA-Z]*)", r"\2 \1" , regex = True)
-    df["Seasons"] = df["Seasons"].replace(r"(two)", "2")
+    df["Vice-president"] = df["Vice-president"].str.title()
+    df["Seasons"] = df["Seasons"].replace(r"(two)", "2", regex = True)
     df["Seasons"] = df["Seasons"].map(int)
     df["Start"] = df.Start.map(int)
     df["Last"] = pd.to_numeric(df["Last"], errors = "coerce")
-    
+    return df
+
 def amendment_22_check(s):
     return s == 1 or s == 2
 
