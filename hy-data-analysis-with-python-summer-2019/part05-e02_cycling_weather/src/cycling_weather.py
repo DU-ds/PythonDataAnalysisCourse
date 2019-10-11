@@ -3,9 +3,7 @@
 import pandas as pd
 import os
 
-def cyclists(f = "none"):
-    if f == "none":
-        f = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
+def cyclists(f):
     df = pd.read_csv(f, sep = ";")
     df = df.dropna(axis = 0, how = "all")
     return df.dropna(axis = 1, how = "all")
@@ -32,20 +30,21 @@ def split_date(df):
     return df
 
 
-def split_date_continues(f = "none"):
+def split_date_continues(f):
     df = cyclists(f)
     df2 = split_date(df)
     df = df.drop("Päivämäärä", axis = 1)
     return pd.concat([df2,df], axis = 1)
 
 def cycling_weather():
-    df_cycles = split_date_continues()
+    f1 = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
+    df_cycles = split_date_continues(f1)
     f2 = os.path.dirname(os.path.realpath(__file__)) + "/kumpula-weather-2017.csv"
-    df_weather = split_date_continues(f2)
+    df_weather = pd.read_csv(f2)
     left_keys = ['Day', 'Month', 'Year'] 
-    right_keys = ['Day', 'Month', 'Year']
-    return pd.merge(df_cycles, df_weather, left_on = left_keys, right_on = right_keys)
-
+    right_keys = ['d', 'm', 'Year']
+    df = pd.merge(df_cycles, df_weather, left_on = left_keys, right_on = right_keys)
+    return df.drop(["m", "d", "Time", "Time zone"], axis = 1)
      
 def main():
     df = cycling_weather()
