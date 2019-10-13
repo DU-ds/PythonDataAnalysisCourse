@@ -37,12 +37,20 @@ def split_date_continues(f):
     return pd.concat([df2,df], axis = 1)
 
 def cyclists_per_day():
-    f = os.path.dirname(os.path.realpath(__file__)) + "Helsingin_pyorailijamaarat.csv"
+    f = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
     df = split_date_continues(f)
+    df = df.drop(["Hour","Weekday"], axis = 1)
     groups = df.groupby(["Year", "Month", "Day"])
+    return groups.sum()
 
 def main():
-    return
+    df = cyclists_per_day()
+    daily_counts = df.sum(axis = 1)
+    aug_2017 = daily_counts[1308:1339]
+    print(aug_2017)
+    plt.plot(range(1,32), aug_2017.values)
+    plt.show()
+    
 
 if __name__ == "__main__":
     main()
