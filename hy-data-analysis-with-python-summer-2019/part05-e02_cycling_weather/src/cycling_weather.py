@@ -48,7 +48,7 @@ def cycling_weather():
      
 def main():
     df = cycling_weather()
-    print(df.head())
+    print(df)
 
 if __name__ == "__main__":
     main()

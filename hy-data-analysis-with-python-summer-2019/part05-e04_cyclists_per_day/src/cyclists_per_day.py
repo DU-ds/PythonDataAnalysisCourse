@@ -50,7 +50,7 @@ def main():
     print(aug_2017)
     plt.plot(range(1,32), aug_2017.values)
     plt.show()
-    
+
 
 if __name__ == "__main__":
     main()
