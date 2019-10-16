@@ -11,7 +11,7 @@ def cyclists(f):
     return df.dropna(axis = 1, how = "all")
 
 def split_date(df):
-    df = df.Päivämäärä.str.split(expand = True)
+    df = df.iloc[:,0].str.split(expand = True)
     colnames = ["Weekday", "Day", "Month", "Year", "Hour"]
     df.columns = colnames
     old_week = ["ma", "ti", "ke", "to", "pe", "la", "su"]
@@ -39,17 +39,34 @@ def split_date_continues(f):
     return pd.concat([df2,df], axis = 1)
 
 def cyclists_per_day():
-    f = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
+    f = "/home/du_ds/Documents/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part05-e13_cycling_weather_continues/src" + "/Helsingin_pyorailijamaarat.csv"
+    # f = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
     df = split_date_continues(f)
     df = df.drop(["Hour","Weekday"], axis = 1)
     groups = df.groupby(["Year", "Month", "Day"])
     return groups.sum()
 
+
+def cycling_weather():
+    f1 = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
+    df_cycles = split_date_continues(f1)
+    f2 = os.path.dirname(os.path.realpath(__file__)) + "/kumpula-weather-2017.csv"
+    df_weather = pd.read_csv(f2)
+    left_keys = ['Day', 'Month', 'Year'] 
+    right_keys = ['d', 'm', 'Year']
+    df = pd.merge(df_cycles, df_weather, left_on = left_keys, right_on = right_keys)
+    return df.drop(["m", "d", "Time", "Time zone"], axis = 1)
+    
+# how about I do an outer join, then leave the day month year info alone,
+# then group by day, sum over it, then get daily counts?
+
 def cycling_weather_continues(station):
-    df = cyclists_per_day()
-    daily_counts = df.sum(axis = 1)
-    aug_2017 = daily_counts[1308:1339] 
-    # adjust to take 2017 instead of august 2017wa
+    cyclists = cyclists_per_day()
+    daily_counts = cyclists.sum(axis = 1)
+    daily_2017 = daily_counts[1096:1461]
+    # aug_2017 = daily_counts[1308:1339] 
+    # adjust to take 2017 instead of august 2017
+    pd.merge(daily_2017, df_weather)
     # fill in values with forward fill:
     # https://stackoverflow.com/questions/41589365/filling-missing-values-using-forward-and-backward-fill-in-pandas-dataframe-ffil#41589383
 
