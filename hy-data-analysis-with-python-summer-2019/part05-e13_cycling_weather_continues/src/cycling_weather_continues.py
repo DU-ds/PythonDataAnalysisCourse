@@ -39,8 +39,7 @@ def split_date_continues(f):
     return pd.concat([df2,df], axis = 1)
 
 def cyclists_per_day():
-    f = "/home/du_ds/Documents/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part05-e13_cycling_weather_continues/src" + "/Helsingin_pyorailijamaarat.csv"
-    # f = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
+    f = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
     df = split_date_continues(f)
     df = df.drop(["Hour","Weekday"], axis = 1)
     groups = df.groupby(["Year", "Month", "Day"])
@@ -55,10 +54,18 @@ def cycling_weather():
     left_keys = ['Day', 'Month', 'Year'] 
     right_keys = ['d', 'm', 'Year']
     df = pd.merge(df_cycles, df_weather, left_on = left_keys, right_on = right_keys)
-    return df.drop(["m", "d", "Time", "Time zone"], axis = 1)
+    return df
+# .drop(["m", "d", "Time", "Time zone"], axis = 1)
     
 # how about I do an outer join, then leave the day month year info alone,
 # then group by day, sum over it, then get daily counts?
+# not an outer join. a many to one (inner) join
+
+# (df_cycles.Year == 2017).sum()
+# Out[19]: 8760
+#cycling_weather_df.shape[0]
+#Out[21]: 8760    
+# so cycling_weather is close to correct. 
 
 def cycling_weather_continues(station):
     cyclists = cyclists_per_day()
