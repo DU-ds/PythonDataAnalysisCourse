@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Oct 16 20:55:32 2019
-
-"""
 
 import os
 from sklearn.linear_model import LinearRegression   
 import pandas as pd
+
 
 def cyclists(f):
     df = pd.read_csv(f, sep = ";")
@@ -15,7 +11,7 @@ def cyclists(f):
     return df.dropna(axis = 1, how = "all")
 
 def split_date(df):
-    df = df.Päivämäärä.str.split(expand = True)
+    df = df.iloc[:,0].str.split(expand = True)
     colnames = ["Weekday", "Day", "Month", "Year", "Hour"]
     df.columns = colnames
     old_week = ["ma", "ti", "ke", "to", "pe", "la", "su"]
@@ -50,120 +46,48 @@ def cyclists_per_day():
     return groups.sum()
 
 
+def cycling_weather():
+    f1 = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
+    df_cycles = split_date_continues(f1)
+    f2 = os.path.dirname(os.path.realpath(__file__)) + "/kumpula-weather-2017.csv"
+    df_weather = pd.read_csv(f2)
+    left_keys = ['Day', 'Month', 'Year'] 
+    right_keys = ['d', 'm', 'Year']
+    df = pd.merge(df_cycles, df_weather, left_on = left_keys, right_on = right_keys)
+    return df
+# .drop(["m", "d", "Time", "Time zone"], axis = 1)
+    
+# how about I do an outer join, then leave the day month year info alone,
+# then group by day, sum over it, then get daily counts?
+# not an outer join. a many to one (inner) join
 
-def prep_data():
-    f = os.path.dirname(os.path.realpath(__file__))
-    f += "/kumpula-weather-2017.csv"
-    df_weather = pd.read_csv(f)
-    df_weather = df_weather.drop(["Time", "Time zone"], axis = 1)
-    df_weather = df_weather.rename(columns = {"m" : "Month", "d" : "Day"})
-    df_weather = df_weather.groupby(["Year", "Month", "Day"]).sum() 
-    # one per group so esentially the identity function
-    
-    cyclists = cyclists_per_day()
-    #daily_counts = cyclists.sum(axis = 0)
-    #daily_2017 = daily_counts[1096:1461]
-    daily_2017 = cyclists.iloc[1096:1461,:]
-    
-    #pd.merge(daily_2017, df_weather, left_on = daily_2017.index, right_on = df_weather.index)
-    
-    return pd.concat([daily_2017, df_weather], axis = 1)
-    # what am I supposed to fill with forward fill?
-    """
-df.isnull().sum()
-Out[110]: 
-Auroransilta                       0
-Eteläesplanadi                     0
-Huopalahti (asema)                 0
-Kaisaniemi/Eläintarhanlahti        0
-Kaivokatu                          0
-Kulosaaren silta et.               0
-Kulosaaren silta po.               0
-Kuusisaarentie                     0
-Käpylä, Pohjoisbaana               0
-Lauttasaaren silta eteläpuoli      0
-Merikannontie                      0
-Munkkiniemen silta eteläpuoli      0
-Munkkiniemi silta pohjoispuoli     0
-Heperian puisto/Ooppera            0
-Pitkäsilta itäpuoli                0
-Pitkäsilta länsipuoli              0
-Lauttasaaren silta pohjoispuoli    0
-Ratapihantie                       0
-Viikintie                          0
-Baana                              0
-Precipitation amount (mm)          0
-Snow depth (cm)                    0
-Air temperature (degC)             0
-dtype: int64
-
-"""
+# (df_cycles.Year == 2017).sum()
+# Out[19]: 8760
+#cycling_weather_df.shape[0]
+#Out[21]: 8760    
+# so cycling_weather is close to correct. 
 
 def cycling_weather_continues(station):
-    """
-    takes a valid measuring point along the bike routes, 
-    and models the relationship with the weather (temp(C) precipitation(mm) snow depth(cm))
-    using a linear regression model data aggregated and filtered
-    so it's one entry for every day of 2017
-    """
+    cyclists = cyclists_per_day()
+    daily_counts = cyclists.sum(axis = 1)
+    daily_2017 = daily_counts[1096:1461]
+    # aug_2017 = daily_counts[1308:1339] 
+    # adjust to take 2017 instead of august 2017
+    pd.merge(daily_2017, df_weather)
+    # fill in values with forward fill:
+    # https://stackoverflow.com/questions/41589365/filling-missing-values-using-forward-and-backward-fill-in-pandas-dataframe-ffil#41589383
+
+    # then use station as dv in a linear regression
+    # explanatory variables:
+    # 'Precipitation amount (mm)', 'Snow depth (cm)', and 'Air temperature (degC)'
+    # fit an intercept
     
-    # prep data
-    df = prep_data()
+    # return tuple: ((*coefs), score)
     
-    features = df.loc[:,['Precipitation amount (mm)', 'Snow depth (cm)', 'Air temperature (degC)']]
-    response = df.loc[:,station]
-    fm = LinearRegression(fit_intercept = True)
-    fm.fit(features, response)
-    coefs = fm.coef_
-    score = fm.score(features, response)
-    return ((coefs), score)
-
-"""
-Exercise 13 (cycling weather continues)
-
-Write function cycling_weather_continues that tries to explain with 
-linear regression the variable of a cycling measuring station’s counts
- using the weather data from corresponding day. The function should 
- take the name of a (cycling) measuring station as a parameter and 
- return the regression coefficients and the score. In more detail:
-
-Read the weather data set from the src folder. Read the cycling data 
-set from folder src and restrict it to year 2017. Further, get the 
-sums of cycling counts for each day. Merge the two datasets by the 
-year, month, and day. Note that for the above you need only small 
-additions to the solution of exercise cycling_weather. After this, 
-use forward fill to fill the missing values.
-
-In the linear regression use as explanatory variables the following columns 
-'Precipitation amount (mm)', 'Snow depth (cm)', and 'Air temperature (degC)'. 
-Explain the variable (measuring station), whose name is given as a parameter 
-to the function cycling_weather_continues. Fit also the intercept. The 
-function should return a pair, whose first element is the regression 
-coefficients and the second element is the score. Above, you may need to 
-use the method reset_index (its counterpart is the method set_index).
-
-The output from the main function should be in the following form:
-
-Measuring station: x
-Regression coefficient for variable 'precipitation': x.x
-Regression coefficient for variable 'snow depth': x.x
-Regression coefficient for variable 'temperature': x.x
-Score: x.xx
-
-Use precision of one decimal for regression coefficients, and precision 
-of two decimals for the score. In the main function test you solution 
-using some measuring station, for example Baana.
-
-"""
-
+    return ((0.0, 0.0, 0.0), 0.0)
+    
 def main():
-    station = "Baana"
-    coefs, score = cycling_weather_continues(station)
-    print("Measuring station: %s" % station)
-    print(f"Regression coefficient for variable 'precipitation': %.1f" % coefs[0])
-    print(f"Regression coefficient for variable 'snow depth': %.1f" % coefs[1])
-    print(f"Regression coefficient for variable 'temperature': %.1f" % coefs[2])
-    print(f"Score: %.2f" % score)
+    return
 
 if __name__ == "__main__":
     main()
