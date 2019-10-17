@@ -52,52 +52,29 @@ def cyclists_per_day():
 
 
 def prep_data():
-    f = os.path.dirname(os.path.realpath(__file__))
-    f += "/kumpula-weather-2017.csv"
-    df_weather = pd.read_csv(f)
-    df_weather = df_weather.drop(["Time", "Time zone"], axis = 1)
-    df_weather = df_weather.rename(columns = {"m" : "Month", "d" : "Day"})
-    df_weather = df_weather.groupby(["Year", "Month", "Day"]).sum() 
-    # one per group so esentially the identity function
-    
-    cyclists = cyclists_per_day()
-    #daily_counts = cyclists.sum(axis = 0)
-    #daily_2017 = daily_counts[1096:1461]
-    daily_2017 = cyclists.iloc[1096:1461,:]
-    
-    #pd.merge(daily_2017, df_weather, left_on = daily_2017.index, right_on = df_weather.index)
-    
-    return pd.concat([daily_2017, df_weather], axis = 1)
-    # what am I supposed to fill with forward fill?
-    """
-df.isnull().sum()
-Out[110]: 
-Auroransilta                       0
-Eteläesplanadi                     0
-Huopalahti (asema)                 0
-Kaisaniemi/Eläintarhanlahti        0
-Kaivokatu                          0
-Kulosaaren silta et.               0
-Kulosaaren silta po.               0
-Kuusisaarentie                     0
-Käpylä, Pohjoisbaana               0
-Lauttasaaren silta eteläpuoli      0
-Merikannontie                      0
-Munkkiniemen silta eteläpuoli      0
-Munkkiniemi silta pohjoispuoli     0
-Heperian puisto/Ooppera            0
-Pitkäsilta itäpuoli                0
-Pitkäsilta länsipuoli              0
-Lauttasaaren silta pohjoispuoli    0
-Ratapihantie                       0
-Viikintie                          0
-Baana                              0
-Precipitation amount (mm)          0
-Snow depth (cm)                    0
-Air temperature (degC)             0
-dtype: int64
+    f1 = "/home/du_ds/Documents/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part05-e13_cycling_weather_continues/src/Helsingin_pyorailijamaarat.csv"
+    f2 = "/home/du_ds/Documents/Git/PythonDataAnalysisCourse/hy-data-analysis-with-python-summer-2019/part05-e13_cycling_weather_continues/src/kumpula-weather-2017.csv"
+#    f1 = os.path.dirname(os.path.realpath(__file__)) + "/Helsingin_pyorailijamaarat.csv"
+    df_cycles = split_date_continues(f1)
+    t = ['Day', 'Month', 'Year']
+    df_cycles = df_cycles.loc[(df_cycles.Year == 2017),:]
+    df_cycles = df_cycles.drop(["Hour"], axis = 1)
+    df_cycles = df_cycles.groupby(t).sum()
+    df_cycles.reset_index(inplace = True)
+#    f2 = os.path.dirname(os.path.realpath(__file__)) + "/kumpula-weather-2017.csv"
+    df_weather = pd.read_csv(f2)
+    cols = dict(zip(['d', 'm'],['Day', 'Month']))
+    df_weather = df_weather.rename(columns = cols)
+    df_weather = df_weather.drop([ "Time", "Time zone"], axis = 1)
+    df = pd.merge(df_cycles, df_weather, on = t)
+#df.isnull().sum()
+#Snow depth (cm)   7
+#the rest are zeros
+    df = df.ffill()
+    return df
+#df2.isnull().sum().sum()
+#0
 
-"""
 
 def cycling_weather_continues(station):
     """
@@ -157,7 +134,8 @@ using some measuring station, for example Baana.
 """
 
 def main():
-    station = "Baana"
+    station = 'Merikannontie'
+    #"Baana"
     coefs, score = cycling_weather_continues(station)
     print("Measuring station: %s" % station)
     print(f"Regression coefficient for variable 'precipitation': %.1f" % coefs[0])
