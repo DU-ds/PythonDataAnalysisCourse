@@ -57,11 +57,13 @@ def get_features(a):
         token_lst = re.findall(pattern, s.lower())
         return "".join(token_lst)
     
-    count = CountVectorizer(analyzer = "char", preprocessor = custom_preprocessor)
+    count = CountVectorizer(analyzer = "char", preprocessor = custom_preprocessor, vocabulary = list(alphabet)) # doesn't NEED to be a list, could just be the string
     # dead ends
     # analyzer = "char", strip_accents = "unicode", token_pattern = pattern )
     features = count.fit_transform(a)
-    return features.to_array()
+    print(features.shape)
+    return features
+    # .to_array()
     # part 3 passed 4/5 tests. get_features returns an n x k sparse matrix instead of an n x 29 np array. 
     # Converting to an array gives an array but still n x k. need to tweak how it counts the characters in alphabet
     # https://stackoverflow.com/questions/26576524/how-do-i-transform-a-scipy-sparse-matrix-to-a-numpy-matrix
