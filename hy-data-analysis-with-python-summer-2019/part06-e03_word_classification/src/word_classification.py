@@ -60,8 +60,11 @@ def get_features(a):
     count = CountVectorizer(analyzer = "char", preprocessor = custom_preprocessor)
     # dead ends
     # analyzer = "char", strip_accents = "unicode", token_pattern = pattern )
-    features = count.fit_transform(finnish)
-    return np.array([[]])
+    features = count.fit_transform(a)
+    return features.to_array()
+    # part 3 passed 4/5 tests. get_features returns an n x k sparse matrix instead of an n x 29 np array. 
+    # Converting to an array gives an array but still n x k. need to tweak how it counts the characters in alphabet
+    # https://stackoverflow.com/questions/26576524/how-do-i-transform-a-scipy-sparse-matrix-to-a-numpy-matrix
 """
 Part 1.
 Write function get_features that gets a one dimensional np.array, 
@@ -72,7 +75,11 @@ alphabet: “abcdefghijklmnopqrstuvwxyzäö-“. The values should be
 the number of times the corresponding character appears in the word.
 """
 def contains_valid_chars(s):
-    return True
+    """ checks if all characters in the string are from alphabet -- empty string is true"""
+    regex = pattern = r"([" + alphabet + "]*)" # change * to + to make empty sting false
+    a = re.fullmatch(regex, s) #returns none if s does not completely match the regex 
+    return a != None
+    
     """
 Part 2.
 contains_valid_chars takes a string as a parameter 
@@ -80,7 +87,29 @@ returns the truth value of whether all the characters in the string belong to th
 """
 
 def get_features_and_labels():
-    return np.array([[]]), np.array([])
+    english = load_english()
+    finnish = load_finnish()
+    finnish_filtered = []
+    english_filtered = []
+    for word in finnish:
+        lword = word.lower()
+        if contains_valid_chars(lword):
+            finnish_filtered.append(lword)
+    for word in english:
+        lword = word.lower()
+        if lword[0] == word[0]: 
+# might not filter words starting with capital letters correctly if two words in string e.g. with hyphen in middle like "core-Python"
+            if contains_valid_chars(lword):
+                english_filtered.append(lword)
+    
+    n_eng = len(english_filtered)
+    n_fin = len(finnish_filtered)
+    y_eng = np.ones(n_eng)
+    y_fin = np.zeros(n_fin)
+    y = np.concatenate([y_fin, y_eng], axis = 0)
+    both = finnish_filtered + english_filtered
+    X = get_features(both)
+    return (X, y)
 """
 Write function get_features_and_labels that returns the tuple (X, y) 
 of the feature matrix and the target vector. Use the labels 0 and 1 
@@ -98,7 +127,25 @@ Use get_features function you made earlier to form the feature matrix.
 """
 
 def word_classification():
-    return []
+    x, y = get_features_and_labels()
+    fm = MultinomialNB()
+    scores = cross_val_score(fm, x, y, cv = model_selection.KFold(n_splits=5, shuffle=True, random_state=0))
+    return scores
+    
+    """
+Use the function get_features_and_labels you made earlier to get the 
+feature matrix and the labels. Use multinomial naive Bayes to do the 
+classification. Get the accuracy scores using the 
+sklearn.model_selection.cross_val_score function; use 5-fold cross 
+validation. The function should return a list of five accuracy scores.
+
+The cv parameter of cross_val_score can be either an integer, which 
+specifies the number of folds, or it can be a cross-validation generator 
+that generates the (train set,test set) pairs. What happens if you pass the 
+following cross-validation generator to cross_val_score as a parameter: 
+sklearn.model_selection.KFold(n_splits=5, shuffle=True, random_state=0).
+"""
+    
 
 
 def main():
