@@ -16,7 +16,7 @@ def find_permutation(n_clusters, real_labels, labels):
 
 def plant_clustering():
     df = load_iris()
-    fm = KMeans(3)
+    fm = KMeans(3, random_state = 0)
     fm.fit(df.data)
     permutation = find_permutation(3, df.target, fm.labels_)
     new_labels = [ permutation[label] for label in fm.labels_]   # permute the labels
