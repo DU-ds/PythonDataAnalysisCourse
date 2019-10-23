@@ -56,7 +56,7 @@ def cluster_hamming(filename):
     features, labels = get_features_and_labels(filename)
     #fit model and predict values  -- compute distance first then use distance in model
     ## compute distance
-    dist = pairwise_distances(feature_matrix, metric = "hamming")
+    dist = pairwise_distances(features, metric = "hamming")
     ## fit model
     y_hat = AgglomerativeClustering(n_clusters = 2, affinity = "precomputed", linkage = "average").fit_predict(dist)
     # plot distances
