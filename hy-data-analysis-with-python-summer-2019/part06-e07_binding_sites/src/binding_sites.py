@@ -33,7 +33,7 @@ def find_permutation(n_clusters, real_labels, labels):
 
 def get_features_and_labels(filename):
     #read data in
-    f = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
+    #f = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
     df = pd.read_csv(f + filename, sep = "\t")
     
     # transform the string X column to a feature matrix
@@ -43,9 +43,9 @@ def get_features_and_labels(filename):
     # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.apply.html#pandas.DataFrame.apply
     # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.apply.html#pandas.Series.apply
     feature_matrix = feature_matrix.apply(toint)
-    return (feature_matrix, df.y)
+    return (np.array(feature_matrix), np.array(df.y))
     
-    return (np.array([[]]), np.array([]))
+    return (np.array([[]]), np.array([])) #ooof I ignored the return type :/
 
 def plot(distances, method='average', affinity='euclidean'):
     mylinkage = hc.linkage(sp.distance.squareform(distances), method=method)
@@ -62,6 +62,10 @@ def cluster_euclidean(filename):
     permutation = find_permutation(2, labels, y_hat)
     new_labels = [ permutation[label] for label in y_hat]
     y_hat_relable = pd.Series(new_labels)
+    # plot
+    ## get distances
+    dist = pairwise_distances(features, metric = "euclidean")
+    plot(dist, method = "average", affinity = "euclidean")
     # return accuracy score
     return accuracy_score(labels, y_hat_relable)
 
@@ -78,7 +82,7 @@ def cluster_hamming(filename):
     new_labels = [ permutation[label] for label in y_hat]
     y_hat_relable = pd.Series(new_labels)
     # plot distances
-    plot(dist) #shows four square clusters, which seems to make sense -- dna has 4 nucleotides
+    plot(dist, method = "average", affinity = "hamming") #shows four square clusters, which seems to make sense -- dna has 4 nucleotides
     # return accuracy score
     return accuracy_score(labels, y_hat_relable)
 
