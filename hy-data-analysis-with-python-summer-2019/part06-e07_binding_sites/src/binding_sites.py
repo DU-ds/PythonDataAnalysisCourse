@@ -16,11 +16,11 @@ import scipy.spatial as sp
 import scipy.cluster.hierarchy as hc
 
 def toint(x):
-    x = x.replace("A", 0)
-    x = x.replace("C", 1)
-    x = x.replace("G", 2)
-    x = x.replace("T", 3)
-    return x
+    x = x.replace("A", "0")
+    x = x.replace("C", "1")
+    x = x.replace("G", "2")
+    x = x.replace("T", "3")
+    return int(x)
     
 def find_permutation(n_clusters, real_labels, labels):
     permutation=[]
@@ -98,7 +98,12 @@ if __name__ == "__main__":
 Failed: test.test_binding_sites.BindingSites.test_features_and_labels
         'DataFrame' object has no attribute 'flat'
 
+#collections?
+
 Failed: test.test_binding_sites.BindingSites.test_toint
         replace() argument 2 must be str, not int
-
+#changed to string, then returned int(string)
 """
+
+
+
