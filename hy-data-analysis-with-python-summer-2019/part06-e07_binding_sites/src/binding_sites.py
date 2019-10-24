@@ -20,7 +20,7 @@ def toint(x):
     x = x.replace("C", "1")
     x = x.replace("G", "2")
     x = x.replace("T", "3")
-    return int(x)
+    return x.astype(int)
     
 def find_permutation(n_clusters, real_labels, labels):
     permutation=[]
