@@ -16,11 +16,11 @@ import scipy.spatial as sp
 import scipy.cluster.hierarchy as hc
 
 def toint(x):
-    x = x.replace("A", "0")
-    x = x.replace("C", "1")
-    x = x.replace("G", "2")
-    x = x.replace("T", "3")
-    return x.astype(int)
+    dikt = {"A" : 0, 
+            "C" : 1, 
+            "G" : 2, 
+            "T" : 3}
+    return dikt[x]
     
 def find_permutation(n_clusters, real_labels, labels):
     permutation=[]
@@ -33,7 +33,7 @@ def find_permutation(n_clusters, real_labels, labels):
 
 def get_features_and_labels(filename):
     #read data in
-    #f = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
+    f = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
     df = pd.read_csv(f + filename, sep = "\t")
     
     # transform the string X column to a feature matrix
@@ -42,8 +42,10 @@ def get_features_and_labels(filename):
     feature_matrix = df.X.str.extractall(regex)
     # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.apply.html#pandas.DataFrame.apply
     # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.apply.html#pandas.Series.apply
-    feature_matrix = feature_matrix.apply(toint)
-    return (np.array(feature_matrix), np.array(df.y))
+    lst = list()
+    for i in range(feature_matrix.shape[1]):
+        lst.append(feature_matrix.iloc[:,i].apply(toint))
+    return (np.array(lst).T, np.array(df.y))
     
     return (np.array([[]]), np.array([])) #ooof I ignored the return type :/
 
