@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+import logging
+logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s')
 
 import os
 import pandas as pd
 import numpy as np
 import scipy
+import math
 from sklearn.cluster import DBSCAN
 from sklearn.metrics import accuracy_score
 
@@ -20,27 +23,33 @@ Before submitting the solution, you can plot the data set (with clusters colored
 
 def find_permutation(n_clusters, real_labels, labels):
     if n_clusters == 1: # shouldn't be true
-        return (labels, 0)
-        # no way to permute, no outliers (otherwise all are "outliers"?)
+        return (labels, 0, real_labels)
+        # no way to permute 
     permutation = []
     n_outliers = 0
     
-    if -1 in np.unique(labels):
-        indx = labels == -1
-        n_outliers = sum(indx)
-        permutation.append(None) # don't know what to do with this 
-        # so it's ignored by accuracy_score
-        n_clusters -= 1 # one cluster dealt with outside of loop
+    if -1 in np.unique(labels): 
+        # outliers
+        idx = labels == -1
+        
+        # count outliers
+        n_outliers = sum(idx)
+        
+        # drop outliers
+        real_labels = real_labels[~idx]
+        labels = labels[~idx]
+        
     
     for i in range(n_clusters):
         idx = labels == i
         # Choose the most common label among data points in the cluster
         new_label = scipy.stats.mode(real_labels[idx])[0][0]
         permutation.append(new_label)
-    return (permutation, n_outliers)
-    
+    logging.debug("permutation: " + str(permutation) + "\nn_outliers: " + str(n_outliers) + "\nlen(real_labels): " + str(len(real_labels)))
+    return permutation, n_outliers, real_labels
+
 def nonconvex_clusters():
-    # f = os.path.dirname(os.path.realpath(__file__))
+    f = os.path.dirname(os.path.realpath(__file__))
     df = pd.read_csv(f + "/data.tsv", sep = "\t")
     lst = list()
     X = df.loc[:,["X1", "X2"]]
@@ -49,16 +58,24 @@ def nonconvex_clusters():
         fm = DBSCAN(eps = e)
         fm.fit(X)
         n_clusters = len(np.unique(fm.labels_))
-        new_labels, n_outliers = find_permutation(n_clusters, y, fm.labels_)
-        if (np.unique(new_labels).all() == np.unique(fm.labels_).all()): #same number of groups 
-            new_labels = [new_labels[label] for label in fm.labels_]
-            score = accuracy_score(y, new_labels)
-            # except IndexError:
+        if -1 in fm.labels_:
+            n_clusters -= 1 # exclude outlier cluster
+        
+        new_labels, n_outliers, y2 = find_permutation(n_clusters, y, fm.labels_)
+        
+        
+        if len(np.unique(y)) != n_clusters:
+            score = np.nan
+        
+        if len(np.unique(new_labels)) == len(np.unique(fm.labels_)): #same number of groups 
+            new_labels = [int(new_labels[label]) for label in fm.labels_ if label != -1]
+            score = accuracy_score(y2, new_labels)
+        #     # except IndexError:
         else:
             score = np.nan
-            # wrong number of labels 
+        #     # wrong number of labels 
         lst.append([e, score, n_clusters, n_outliers])
-    return lst
+    # return lst
 
     return pd.DataFrame(lst, columns = ["eps", "Score", "Clusters", "Outliers"])
 
