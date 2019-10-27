@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import logging
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s')
-
+logging.disable(logging.DEBUG)
 import os
 import pandas as pd
 import numpy as np
@@ -22,7 +22,7 @@ Before submitting the solution, you can plot the data set (with clusters colored
 """
 
 def find_permutation(n_clusters, real_labels, labels):
-    if n_clusters == 1: # shouldn't be true
+    if n_clusters == 1:
         return (labels, 0, real_labels)
         # no way to permute 
     permutation = []
@@ -63,19 +63,18 @@ def nonconvex_clusters():
         
         new_labels, n_outliers, y2 = find_permutation(n_clusters, y, fm.labels_)
         
+        #if(len(np.unique))
         
-        if len(np.unique(y)) != n_clusters:
-            score = np.nan
         
-        if len(np.unique(new_labels)) == len(np.unique(fm.labels_)): #same number of groups 
+        if len(np.unique(y)) == n_clusters:
             new_labels = [int(new_labels[label]) for label in fm.labels_ if label != -1]
             score = accuracy_score(y2, new_labels)
         #     # except IndexError:
         else:
             score = np.nan
         #     # wrong number of labels 
-        lst.append([e, score, n_clusters, n_outliers])
-    # return lst
+        lst.append([e, score, float(n_clusters), float(n_outliers)])
+    # return lst in dataframe
 
     return pd.DataFrame(lst, columns = ["eps", "Score", "Clusters", "Outliers"])
 
