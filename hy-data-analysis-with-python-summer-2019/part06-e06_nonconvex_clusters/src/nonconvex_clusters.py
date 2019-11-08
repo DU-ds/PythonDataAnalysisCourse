@@ -13,12 +13,8 @@ from sklearn.metrics import accuracy_score
 """
 TODO
 
-need to figure out how to handle outliers in find_permutation
-maybe check tests for a better idea of how to handle it
-
 Also deal with this:
 Before submitting the solution, you can plot the data set (with clusters colored) to see what kind of data we are dealing with.
-
 """
 
 def find_permutation(n_clusters, real_labels, labels):

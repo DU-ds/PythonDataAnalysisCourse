@@ -61,7 +61,7 @@ def get_features(a):
     # dead ends
     # analyzer = "char", strip_accents = "unicode", token_pattern = pattern )
     features = count.fit_transform(a)
-    print(features.shape)
+    # print(features.shape)
     return features
     # .to_array()
     # part 3 passed 4/5 tests. get_features returns an n x k sparse matrix instead of an n x 29 np array. 
